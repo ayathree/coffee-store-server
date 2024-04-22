@@ -99,6 +99,37 @@ async function run() {
       const result = await coffeeUserCollection.insertOne(userCoffee);
       res.send(result)
   })
+
+  // read for user
+  app.get('/userCoffee', async(req,res)=>{
+    const cursor = coffeeUserCollection.find();
+    const result = await cursor.toArray();
+    res.send(result)
+})
+
+// delete for user
+app.delete('/userCoffee/:id', async(req,res)=>{
+
+  const id =req.params.id;
+  const query = {_id: new ObjectId(id)}
+  const result = await coffeeUserCollection.deleteOne(query);
+  res.send(result)
+})
+// update for user
+app.patch('/userCoffee', async(req,res)=>{
+  const user = req.body;
+  const filter = {email: user.email}
+  const updateDoc = {
+    $set:{
+      lastLoggedAt: user.lastLoggedAt
+    }
+  }
+  const result = await coffeeUserCollection.updateOne(filter, updateDoc)
+  res.send(result)
+
+})
+  
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
